@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Insert_cz</h1>
+    <div>
+        <form method="post" action="{% url 'insert_cz' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="cz" accept=".txt"><br>
+            <input type="text" placeholder="充值表头所在行" name="header_line" value="1"><br>
+            <input type="submit" value="上传充值文件">
+        </form>
+    </div>
+
+    <a href="{% url 'index' %}"><button>返回</button></a>
+</body>
+</html>

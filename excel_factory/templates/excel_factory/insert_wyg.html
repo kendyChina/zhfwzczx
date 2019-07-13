@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Insert_wyg</h1>
+    <div>
+        <form method="post" action="{% url 'insert_wyg' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="wyg" accept=".csv"><br>
+            <input type="text" placeholder="沃云购表头所在行" name="header_line" value="1"><br>
+            <input type="submit" value="上传沃云购文件">
+        </form>
+    </div>
+
+    <a href="{% url 'index' %}"><button>返回</button></a>
+</body>
+</html>

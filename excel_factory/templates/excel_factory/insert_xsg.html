@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insert_Xsg</title>
+</head>
+<body>
+    <h1>Insert_xsg</h1>
+    <div>
+        <form method="post" action="{% url 'insert_xsg' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="xsg" accept=".csv"><br>
+            <input type="text" placeholder="线上购表头所在行" name="header_line" value="1"><br>
+            <input type="submit" value="上传线上购文件">
+        </form>
+    </div>
+
+    <a href="{% url 'index' %}"><button>返回</button></a>
+</body>
+</html>

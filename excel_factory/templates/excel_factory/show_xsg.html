@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show_xsg</title>
+    <style>
+        .tdd {margin: 0px; border-style: solid; border-width: 1px}
+    </style>
+</head>
+<body>
+<table>
+    {% if table %}
+        {% for row in table %}
+        <tr>
+            {% for col in row %}
+                <td class="tdd">{{ col }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    {% endif %}
+</table>
+</body>
+</html>

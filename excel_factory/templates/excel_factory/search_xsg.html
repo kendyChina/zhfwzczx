@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search_Xsg</title>
+</head>
+<body>
+    <h1>Search_xsg</h1>
+    <div>
+        <form method="post" action="{% url 'search_xsg' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label>请输入发展人编码：</label>
+            <input type="text" placeholder="10位发展人编码" name="fzrbm" value="5110326222"><br>
+            <input type="date" placeholder="开始日期" name="date_start" value="2019-05-01">-
+            <input type="date" placeholder="结束日期" name="date_end" value="2019-05-31">
+            <input type="submit" value="查询">
+        </form>
+    </div>
+
+    <a href="{% url 'index' %}"><button>返回</button></a>
+</body>
+</html>
