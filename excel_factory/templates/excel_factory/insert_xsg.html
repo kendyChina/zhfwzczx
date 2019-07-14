@@ -1,20 +1,20 @@
+{% extends "excel_factory/base.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Insert_Xsg</title>
+    <title></title>
 </head>
 <body>
-    <h1>Insert_xsg</h1>
-    <div>
+	{% block content %}
+	    <h1>Insert_xsg</h1>
         <form method="post" action="{% url 'insert_xsg' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="xsg" accept=".csv"><br>
-            <input type="text" placeholder="线上购表头所在行" name="header_line" value="1"><br>
-            <input type="submit" value="上传线上购文件">
+            <label>表头所在行：</label><input type="text" placeholder="线上购表头所在行" name="header_line" value="1"><br>
+            <input type="submit" value="上传线上购文件" class="button">
         </form>
-    </div>
-
-    <a href="{% url 'index' %}"><button>返回</button></a>
+        <a href="{% url 'index' %}"><button class="button">返回</button></a>
+	{% endblock %}
 </body>
 </html>

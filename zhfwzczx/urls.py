@@ -24,6 +24,8 @@ urlpatterns = [
     path(r"insert_wyg", excel_factory_views.insert_wyg, name="insert_wyg"),
     path(r"insert_cz", excel_factory_views.insert_cz, name="insert_cz"),
     path(r"search_xsg", excel_factory_views.search_xsg, name="search_xsg"),
+    path(r"insert_ddcx", excel_factory_views.insert_ddcx, name="insert_ddcx"),
+    path(r"search_wyg", excel_factory_views.search_wyg, name="search_wyg"),
+    path(r"insert_ddmx", excel_factory_views.insert_ddmx, name="insert_ddmx"),
     path('admin/', admin.site.urls),
-
 ]

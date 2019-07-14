@@ -140,6 +140,8 @@ class Cz(models.Model):
     dhhm = models.CharField(max_length=100, null=True)
     fzbm = models.CharField(max_length=100, null=True)
     rwsj = models.CharField(max_length=100, null=True)
+    jhrq = models.CharField(max_length=100, null=True)
+    jhyf = models.CharField(max_length=100, null=True)
     rwyf = models.CharField(max_length=100, null=True)
     zt = models.CharField(max_length=100, null=True)
     cpbm = models.CharField(max_length=100, null=True)
@@ -162,3 +164,52 @@ class Xm(models.Model):
 
     fzrbm = models.CharField(max_length=100, primary_key=True)
     xm = models.CharField(max_length=100, null=True)
+
+# '订单号', '订单ID', 'ESS订单号', '订单日期', '订单状态', '省分', '地市', '商品类型', '商品名称',
+# '套餐名称', '订购号码', '终端品牌', '终端型号', '终端颜色', '活动类型', '可选包', '商城实收',
+# '支付状态', '支付方式', '客户姓名', '证件类型', '证件号码', '联系人', '联系人电话', '其他联系人电话',
+# '配送地址', '客户备注', '权益类型', '权益明细', '发展人姓名', '发展人编码', '归属渠道', '渠道来源',
+# '用户类型', '实名制激活状态', '换卡激活状态'
+class Ddcx(models.Model):
+    def __str__(self):
+        return self.ddh
+
+    ddh = models.CharField(max_length=100, primary_key=True)
+    ddid = models.CharField(max_length=100, null=True)
+    essddh = models.CharField(max_length=100, null=True)
+    ddrq = models.CharField(max_length=100, null=True)
+    ddrq2 = models.CharField(max_length=100, null=True)
+    ddyf = models.CharField(max_length=100, null=True)
+    ddzt = models.CharField(max_length=100, null=True)
+    sf = models.CharField(max_length=100, null=True)
+    ds = models.CharField(max_length=100, null=True)
+    splx = models.CharField(max_length=100, null=True)
+    spmc = models.CharField(max_length=100, null=True)
+    tcmc = models.CharField(max_length=100, null=True)
+    dghm = models.CharField(max_length=100, null=True)
+    zdpp = models.CharField(max_length=100, null=True)
+    zdxh = models.CharField(max_length=100, null=True)
+    zdys = models.CharField(max_length=100, null=True)
+    hdlx = models.CharField(max_length=100, null=True)
+    kxb = models.CharField(max_length=100, null=True)
+    scss = models.CharField(max_length=100, null=True)
+    zfzt = models.CharField(max_length=100, null=True)
+    zffs = models.CharField(max_length=100, null=True)
+    khxm = models.CharField(max_length=100, null=True)
+    zjlx = models.CharField(max_length=100, null=True)
+    zjhm = models.CharField(max_length=100, null=True)
+    lxr = models.CharField(max_length=100, null=True)
+    lxrdh = models.CharField(max_length=100, null=True)
+    qtlxrdh = models.CharField(max_length=100, null=True)
+    psdz = models.CharField(max_length=100, null=True)
+    khbz = models.CharField(max_length=100, null=True)
+    qylx = models.CharField(max_length=100, null=True)
+    qymx = models.CharField(max_length=100, null=True)
+    fzrxm = models.CharField(max_length=100, null=True)
+    fzrbm = models.CharField(max_length=100, null=True)
+    gsqd = models.CharField(max_length=100, null=True)
+    qdly = models.CharField(max_length=100, null=True)
+    yhlx = models.CharField(max_length=100, null=True)
+    smzjhzt = models.CharField(max_length=100, null=True)
+    hkjhzt = models.CharField(max_length=100, null=True)
+

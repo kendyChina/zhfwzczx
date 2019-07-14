@@ -1,0 +1,22 @@
+{% extends "excel_factory/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+	{% block content %}
+    <h1>Insert_ddmx</h1>
+        <form method="post" action="{% url 'insert_ddmx' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="ddmx" accept=".csv"><br>
+            <input type="text" placeholder="订单明细表头所在行" name="header_line" value="3"><br>
+            <input type="submit" value="上传订单明细文件" class="button">
+        </form>
+        <a href="{% url 'index' %}"><button class="button">返回</button></a>
+    {% endblock %}
+
+
+</body>
+</html>

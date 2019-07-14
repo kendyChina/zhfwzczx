@@ -1,23 +1,28 @@
+{% extends "excel_factory/base.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Show_xsg</title>
-    <style>
-        .tdd {margin: 0px; border-style: solid; border-width: 1px}
-    </style>
+    <title></title>
 </head>
 <body>
-<table>
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0">
+    {% if xm %}
+    <div class="table_title">
+    	<b>{{ xm }}项目订单报表</b>
+    </div>
+    {% endif %}
     {% if table %}
         {% for row in table %}
         <tr>
             {% for col in row %}
-                <td class="tdd">{{ col }}</td>
+                <td>{{ col }}</td>
             {% endfor %}
         </tr>
         {% endfor %}
     {% endif %}
 </table>
+{% endblock %}
 </body>
 </html>

@@ -1,13 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from excel_factory.models import Xsg, Wyg, Cz
+from excel_factory.models import *
 from django.db.utils import IntegrityError
 from django.conf import settings
 from django.db import connection
 import csv, os, datetime
-
-
 
 # Create your views here.
 
@@ -21,7 +19,7 @@ def replace(str):
 
 class Insert():
 
-    def __init__(self, file, header, model, header_line=1, get_date=[], batch_size = 20):
+    def __init__(self, file, header, model, header_line=1, get_date=[], batch_size = 20, handle_dghm=False):
         self.file = file # 文件
         self.header_line = int(header_line) # 表头所在行数
         self.header = list(map(remove_quo, header)) # 表头名称
@@ -30,6 +28,7 @@ class Insert():
         self.batch_size = batch_size
         self.batch = []
         self.succ_count = 0
+        self.handle_dghm = handle_dghm
 
     def __str__(self):
         return self.model
@@ -52,11 +51,16 @@ class Insert():
         countA = 1
         countB = 0
         for l in self.get_date:
-            self.row.insert(l+countA, self.row[l+countB][:10]) # 增加日期
+            self.row.insert(l+countA, self.row[l+countB][:10]) # 插入日期
             countA += 1
-            self.row.insert(l+countA, self.row[l+countB][:7])  # 增加日期
+
+            self.row.insert(l+countA, self.row[l+countB][:7])  # 插入月份
             countA += 1
             countB += 2
+
+    def __handle_dghm(self):
+        dghm = self.header_key.index("dghm")
+        self.row[dghm] = self.row[dghm][:11]
 
     def __get_models_dict(self):
         models_dict = {}
@@ -115,7 +119,11 @@ class Insert():
                     for self.row in reader:
                         self.row = list(map(remove_quo, self.row))
                         self.__insert_date()
+                        if self.handle_dghm:
+                            self.__handle_dghm()
 
+                        if self.handle_dghm:
+                            pass
                         # self.batch_now + 1
                         self.__get_models_dict()
     
@@ -127,7 +135,7 @@ class Insert():
                             print(e)
             elif file_extension == ".txt":
                 # 把cbss发展人是None的都删掉，以免影响插入
-                self.model.objects.filter(cbzzfzr=None).delete()
+                self.model.objects.filter(cbssfzr=None).delete()
 
                 i = 1
                 while True:
@@ -150,6 +158,7 @@ class Insert():
                     self.row = self.row.strip().split("\t")
                     self.__insert_date()
 
+
                     # self.batch_now + 1
                     self.__get_models_dict()
 
@@ -159,6 +168,7 @@ class Insert():
                         self.__bulk_create()
                     except BaseException as e:
                         print(e)
+            self.__bulk_create()
         os.remove(self.local_file)
 
 def get_index(list, *args):
@@ -166,7 +176,6 @@ def get_index(list, *args):
     for arg in args:
         result.append(list.index(arg))
     return result
-
 
 # 重定向index页
 def index_redirect(request):
@@ -180,12 +189,14 @@ def index(request):
 def insert_xsg(request):
     if request.method == "GET":
         return render(request, "excel_factory/insert_xsg.html")
-    header = ['="省分"', '="地市"', '="正式订单号"', '="ICCID"', '="订单时间"', '="订购号码"', '="客户姓名"',
-              '="证件号码"', '="联系电话"', '="性别"', '="年龄"', '="订单状态"', '="套餐名称"', '="商品名称"',
-              '="退单时间"', '="退单原因"', '="开户时间"', '="激活状态"', '="激活时间"', '="推广渠道编码"',
-              '="推广渠道名称"', '="推广发展人编码"', '="推广发展人名称"', '="渠道编码"', '="渠道名称"',
-              '="发展人编码"', '="发展人名称"', '="交付方式"', '="推荐人"', '="推广人ID"', '="码上购类别"',
-              '="上线手机号"', '="收货地址"', '="开户发展渠道类型"', '="是否二次营销"']
+    header = [
+        '="省分"', '="地市"', '="正式订单号"', '="ICCID"', '="订单时间"', '="订购号码"', '="客户姓名"',
+        '="证件号码"', '="联系电话"', '="性别"', '="年龄"', '="订单状态"', '="套餐名称"', '="商品名称"',
+        '="退单时间"', '="退单原因"', '="开户时间"', '="激活状态"', '="激活时间"', '="推广渠道编码"',
+        '="推广渠道名称"', '="推广发展人编码"', '="推广发展人名称"', '="渠道编码"', '="渠道名称"',
+        '="发展人编码"', '="发展人名称"', '="交付方式"', '="推荐人"', '="推广人ID"', '="码上购类别"',
+        '="上线手机号"', '="收货地址"', '="开户发展渠道类型"', '="是否二次营销"'
+    ]
 
     xsg = Insert(
         file=request.FILES.get("xsg"),
@@ -202,14 +213,16 @@ def insert_xsg(request):
 def insert_wyg(request):
     if request.method == "GET":
         return render(request, "excel_factory/insert_wyg.html")
-    header = ['内部订单号', '外部订单号', '外部下单时间', '生产模式', '订单来源', '商品类型', '商品名称', '开户号码',
-              '地市', '环节', '支付时间', '支付流水号', '支付类型', '物流单号', '套餐名称', '首月资费方式', '是否异常单',
-              '自动化异常类型', '自动化异常原因', '人工标记类型', '异常原因', '备注信息', '配送方式', '支付方式',
-              '发展人名称', '发展人编码', '终端号', '卡串号', '品牌', '发票抬头', '推荐人姓名', '发货时间',
-              '物流公司', '收货人姓名', '收货人电话', '买家留言', '卖家留言', '订单金额(元)', '开户时间', '商品数量',
-              '支付状态', 'WMS退单状态', '签收状态', '回单状态', '是否预约单', '商品小类', '网别', '是否老用户',
-              '收货人地址', '退单状态', '退单时间', '代金券编码', '代金券名称', '退款状态', '激活状态', '审核状态',
-              '审核备注', '撤单状态', '签收时间', '首次配送失败时间', '激活时间', '退单原因', '证件照上传状态', '证件审核状态']
+    header = [
+        '内部订单号', '外部订单号', '外部下单时间', '生产模式', '订单来源', '商品类型', '商品名称', '开户号码',
+        '地市', '环节', '支付时间', '支付流水号', '支付类型', '物流单号', '套餐名称', '首月资费方式', '是否异常单',
+        '自动化异常类型', '自动化异常原因', '人工标记类型', '异常原因', '备注信息', '配送方式', '支付方式',
+        '发展人名称', '发展人编码', '终端号', '卡串号', '品牌', '发票抬头', '推荐人姓名', '发货时间',
+        '物流公司', '收货人姓名', '收货人电话', '买家留言', '卖家留言', '订单金额(元)', '开户时间', '商品数量',
+        '支付状态', 'WMS退单状态', '签收状态', '回单状态', '是否预约单', '商品小类', '网别', '是否老用户',
+        '收货人地址', '退单状态', '退单时间', '代金券编码', '代金券名称', '退款状态', '激活状态', '审核状态',
+        '审核备注', '撤单状态', '签收时间', '首次配送失败时间', '激活时间', '退单原因', '证件照上传状态', '证件审核状态'
+    ]
 
     wyg = Insert(
         file=request.FILES.get("wyg"),
@@ -226,15 +239,17 @@ def insert_wyg(request):
 def insert_cz(request):
     if request.method == "GET":
         return render(request, "excel_factory/insert_cz.html")
-    header = ['用户编号', '电话号码', '发展部门', '入网时间', '入网月份', '状态',
-              '产品编码', '产品名称', '余额', '最后停机时间', '首次充值金额', '首次充值时间',
-              '累计充值金额', '是否充值', '发展区域', 'CBSS发展人']
+    header = [
+        '用户编号', '电话号码', '发展部门', '入网时间', '入网月份', '状态',
+        '产品编码', '产品名称', '余额', '最后停机时间', '首次充值金额', '首次充值时间',
+        '累计充值金额', '是否充值', '发展区域', 'CBSS发展人'
+    ]
     cz = Insert(
         file=request.FILES.get("cz"),
         header_line=request.POST.get("header_line"),
         header=header,
         model=Cz,
-        get_date=get_index(header, "首次充值时间")
+        get_date=get_index(header, "入网时间", "首次充值时间"),
     )
     cz.run()
 
@@ -268,11 +283,20 @@ def search_xsg(request):
 
     table = [["订单日期", "订单量", "激活量", "激活率", "首充≥50", "充值率", "综转率"], ]
 
+    count_index = {
+        "ddrq": 7, # 订单日期
+        "jhzt": 9, # 激活状态
+        "scje": 13 # 首充金额
+    }
+
+    # 首充金额判断门槛
+    scje = 50
+
     # 统计订单量
     def count_ddl(date):
         i = 0
         for row in result:
-            if row[7] == date:  # 判断订单日期
+            if row[count_index["ddrq"]] == date:  # 判断订单日期
                 i += 1
         return i
 
@@ -280,7 +304,7 @@ def search_xsg(request):
     def count_jhl(date):
         i = 0
         for row in result:
-            if row[7] == date and row[9] == "已激活":  # 判断订单日期和激活状态
+            if row[count_index["ddrq"]] == date and row[count_index["jhzt"]] == "已激活":  # 判断订单日期和激活状态
                 i += 1
         return i
 
@@ -288,9 +312,9 @@ def search_xsg(request):
     def count_czl(date):
         i = 0
         for row in result:
-            if row[13] is not None:
-                if len(row[13]) > 0:
-                    if row[7] == date and float(row[13]) >= 50:  # 判断订单日期和首充金额≥50
+            if row[count_index["scje"]] is not None:
+                if len(row[count_index["scje"]]) > 0:
+                    if row[count_index["ddrq"]] == date and float(row[count_index["scje"]]) >= scje:  # 判断订单日期和首充金额≥50
                         i += 1
         return i
 
@@ -312,4 +336,73 @@ def search_xsg(request):
 
         row = [date, a, b, c, d, e, f]
         table.append(row)
-    return render(request, "excel_factory/show_xsg.html", {"table": table})
+    xm = result[0][0]
+    return render(request, "excel_factory/show_xsg.html", {"table": table, "xm": xm})
+
+def insert_ddcx(request):
+    if request.method == "GET":
+        return render(request, "excel_factory/insert_ddcx.html")
+    header = [
+        '订单号', '订单ID', 'ESS订单号', '订单日期', '订单状态', '省分', '地市', '商品类型', '商品名称',
+        '套餐名称', '订购号码', '终端品牌', '终端型号', '终端颜色', '活动类型', '可选包', '商城实收',
+        '支付状态', '支付方式', '客户姓名', '证件类型', '证件号码', '联系人', '联系人电话', '其他联系人电话',
+        '配送地址', '客户备注', '权益类型', '权益明细', '发展人姓名', '发展人编码', '归属渠道', '渠道来源',
+        '用户类型', '实名制激活状态', '换卡激活状态'
+    ]
+
+    ddcx = Insert(
+        file=request.FILES.get("ddcx"),
+        header_line=request.POST.get("header_line"),
+        header=header,
+        model=Ddcx,
+        get_date=get_index(header, "订单日期"),
+        handle_dghm=True,
+    )
+    ddcx.run()
+
+    return HttpResponse(u"succ")
+
+def search_wyg(request):
+    if request.method == "GET":
+        return render(request, "excel_factory/search_wyg.html")
+
+    fzrbm = request.POST.get("fzrbm")
+    date_start = request.POST.get("date_start")
+    date_end = request.POST.get("date_end")
+
+    dates = get_all_date(date_start, date_end)
+
+    with connection.cursor() as c:
+        c.execute("""
+            SELECT * FROM wyg_ddcx_cz_xm WHERE wyg_ddcx_cz_xm.发展人编码=%s
+        """, (fzrbm, ))
+        result = c.fetchall()
+
+    view_fields = [
+        "项目名称", "发展人编码", '订单系统订单号', '总商订单号', '订购号码', '客户姓名',
+        '外部下单时间', '外部下单日期', '外部下单月份', '订单系统状态', '总商状态', '订单系统激活状态',
+        '总商激活状态', '订单系统激活时间', '充值数激活时间', '订单系统激活日期', '充值数激活日期',
+        '订单系统激活月份', '充值数激活月份', '首次充值金额', '首次充值时间', '首次充值日期', '首次充值月份'
+    ]
+    def get_ind(field):
+        return view_fields.index(field)
+
+    result1 = []
+    for row in result:
+        row = list(row)
+        if row[get_ind("总商状态")] is not None:
+            row[get_ind("订单系统状态")] = row[get_ind("总商状态")]
+            if row[get_ind("总商激活状态")] == "已激活":
+                row[get_ind("订单系统激活状态")] = row[get_ind("总商激活状态")]
+                if row[get_ind("充值数激活时间")] is not None:
+                    row[get_ind("订单系统激活时间")] = row[get_ind("充值数激活时间")]
+                    row[get_ind("订单系统激活日期")] = row[get_ind("充值数激活日期")]
+                    row[get_ind("订单系统激活月份")] = row[get_ind("充值数激活月份")]
+
+        result1.append(row)
+    return HttpResponse(result1)
+
+def insert_ddmx(request):
+    if request.method == "GET":
+        return render(request, "excel_factory/insert_ddmx.html")
+    pass

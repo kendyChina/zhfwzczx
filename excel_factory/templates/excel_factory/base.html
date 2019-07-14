@@ -3,9 +3,17 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{% block title %}本地引流支撑系统{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'excel_factory/base.css' %}" />
 </head>
 <body>
-
+	{% block head %}
+	{% endblock %}
+	
+	<div class="content">
+		{% block content %}
+		{% endblock %}	
+	</div>
+	
 </body>
 </html>

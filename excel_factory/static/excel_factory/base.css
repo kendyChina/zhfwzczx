@@ -1,1 +1,5 @@
-div {margin: 0 auto}
+.content {margin: 0 auto; width: 500px; text-align: center;}
+.button {margin-top: 10px;}
+table {border: 1px solid black; width: 500px; margin: 0 auto;}
+tr td {border: 1px solid black;}
+.table_title {padding: 10px 0px; border: 1px solid black; width: 500px;}

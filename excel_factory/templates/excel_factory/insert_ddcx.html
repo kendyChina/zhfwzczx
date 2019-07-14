@@ -1,0 +1,20 @@
+{% extends "excel_factory/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+	{% block content %}
+	    <h1>插入订单查询表</h1>
+        <form method="post" action="{% url 'insert_ddcx' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="ddcx" accept=".csv"><br>
+            <label>表头所在行：</label><input type="text" placeholder="订单查询表头所在行" name="header_line" value="1"><br>
+            <input type="submit" value="上传订单查询文件" class="button">
+        </form>
+        <a href="{% url 'index' %}"><button class="button">返回</button></a>
+	{% endblock %}
+</body>
+</html>

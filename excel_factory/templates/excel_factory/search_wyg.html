@@ -1,0 +1,24 @@
+{% extends "excel_factory/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+	{% block content %}
+    <h1>Search_wyg</h1>
+    <div>
+        <form method="post" action="{% url 'search_wyg' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label>请输入发展人编码：</label>
+            <input type="text" placeholder="10位发展人编码" name="fzrbm" value="5110807159"><br>
+            <label>开始日期：</label><input type="date" placeholder="开始日期" name="date_start" value="2019-06-01"> --
+            <label>结束日期：</label><input type="date" placeholder="结束日期" name="date_end" value="2019-06-30">
+            <input type="submit" value="查询" class="button">
+        </form>
+    </div>
+    <a href="{% url 'index' %}"><button class="button">返回</button></a>
+    {% endblock %}
+</body>
+</html>
